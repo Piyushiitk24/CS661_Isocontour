@@ -9,3 +9,6 @@ results/*.vtp
 
 # Ignore VS Code settings
 .vscode/
+
+# Ignore large data files
+data/*.vtk
