@@ -2,8 +2,8 @@
 ## Isocontour and Volume Visualization  
 ### Course: CS661 - Big Data Visual Analytics  
 ### Submitted By:  
-- Group Number: `<group_number>`  
-- Roll Numbers: `<rollnum1>, <rollnum2>`  
+- Group Number: `28`  
+- Roll Numbers: `241040099, 242110601`  
 
 ---
 

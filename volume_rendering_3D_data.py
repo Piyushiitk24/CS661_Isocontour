@@ -18,15 +18,16 @@ def main():
 
     # Command-line argument parsing to allow user input
     parser = argparse.ArgumentParser(description="VTK Volume Rendering with Optional Phong Shading")
-    parser.add_argument("--input", type=str, required=True, help="Filename of the 3D .vti file (should be in the same directory).")
-    parser.add_argument("--phong", type=int, choices=[0, 1], required=True, 
+    parser.add_argument("--input", type=str, required=True,
+                        help="Path (absolute or relative) to the 3D .vti file.")
+    parser.add_argument("--phong", type=int, choices=[0, 1], required=True,
                         help="Enable Phong shading (1=Yes, 0=No)")
     args = parser.parse_args()
 
     # Ensure input file exists in the current directory
     input_file = os.path.basename(args.input)  # Extract only filename
-    if not os.path.exists(input_file):
-        raise FileNotFoundError(f"Error: Input file '{input_file}' not found in the current directory.")
+    if not os.path.isfile(args.input):
+        raise FileNotFoundError(f"Error: Input file '{args.input}' not found or path is invalid.")
 
     # Load the 3D dataset from the input .vti file using vtkXMLImageDataReader
     reader = vtk.vtkXMLImageDataReader()

@@ -47,6 +47,8 @@ def extract_isocontour(input_file, isovalue, output_file):
     # =========================================================================
     points = vtk.vtkPoints()    # Stores (x,y) coordinates of intersection points
     lines = vtk.vtkCellArray()  # Stores line segments connecting the points
+    scalar_values = vtk.vtkFloatArray()  # Stores scalar values for colouring
+    scalar_values.SetName("Pressure")    # Name of the scalar field (for ParaView)
 
     # =========================================================================
     # Step 3: Process Each Cell in the Grid
@@ -115,6 +117,8 @@ def extract_isocontour(input_file, isovalue, output_file):
                 # Add points to the VTKPoints structure
                 point0_id = points.InsertNextPoint(intersections[0][0], intersections[0][1], 0.0)
                 point1_id = points.InsertNextPoint(intersections[1][0], intersections[1][1], 0.0)
+                scalar_values.InsertNextValue(isovalue)  # Assign isovalue to both points
+                scalar_values.InsertNextValue(isovalue)
                 
                 # Create a line segment between the two points
                 lines.InsertNextCell(2)  # '2' means a line segment
@@ -127,11 +131,13 @@ def extract_isocontour(input_file, isovalue, output_file):
     polydata = vtk.vtkPolyData()
     polydata.SetPoints(points)  # Attach all points
     polydata.SetLines(lines)    # Attach all line segments
+    polydata.GetPointData().SetScalars(scalar_values)  # Attach scalar data for colouring
 
     writer = vtk.vtkXMLPolyDataWriter()
     writer.SetFileName(output_file)  # Set output filename
     writer.SetInputData(polydata)    # Connect the data
     writer.Write()                   # Write to disk
+    print(f"Isocontour successfully written to {output_file}!")
 
 def main():
     """Handles command-line arguments and runs the extraction."""
@@ -168,3 +174,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # Step 2: Added vtkFloatArray: Created scalar_values to store scalar data for the isocontour points.
+	# Step 3: Inserted Scalar Data Alongside Points: Added scalar_values.InsertNextValue(isovalue) for each intersection point.
+	# Step 4: Associated Scalars with PolyData: Used polydata.GetPointData().SetScalars(scalar_values) to include scalar values in the output .vtp file.
