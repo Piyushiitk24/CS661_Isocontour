@@ -174,7 +174,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    # Step 2: Added vtkFloatArray: Created scalar_values to store scalar data for the isocontour points.
-	# Step 3: Inserted Scalar Data Alongside Points: Added scalar_values.InsertNextValue(isovalue) for each intersection point.
-	# Step 4: Associated Scalars with PolyData: Used polydata.GetPointData().SetScalars(scalar_values) to include scalar values in the output .vtp file.
