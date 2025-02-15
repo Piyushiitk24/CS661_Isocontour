@@ -40,7 +40,9 @@ def extract_isocontour(input_file, isovalue, output_file):
     # Grid properties
     origin = image_data.GetOrigin()   # Starting point (x0, y0, z0)
     spacing = image_data.GetSpacing() # Distance between grid points (dx, dy, dz)
-    scalars = image_data.GetPointData().GetScalars()  # Scalar values at each point
+    scalars = image_data.GetPointData().GetArray('Pressure')
+    if not scalars:
+        raise ValueError("Pressure array not found.")
 
     # =========================================================================
     # Step 2: Prepare Output Structures
@@ -82,7 +84,7 @@ def extract_isocontour(input_file, isovalue, output_file):
             intersections = []  # Store intersection points for this cell
 
             # Edge 0: Bottom edge (left to right)
-            if (s00 <= isovalue) != (s10 <= isovalue):
+            if (s00 < isovalue) != (s10 < isovalue):
                 # Linear interpolation to find intersection point
                 t = (isovalue - s00) / (s10 - s00) if (s10 != s00) else 0.0
                 x = origin[0] + (col + t) * spacing[0]
@@ -90,21 +92,21 @@ def extract_isocontour(input_file, isovalue, output_file):
                 intersections.append((x, y))
 
             # Edge 1: Right edge (bottom to top)
-            if (s10 <= isovalue) != (s11 <= isovalue):
+            if (s10 < isovalue) != (s11 < isovalue):
                 t = (isovalue - s10) / (s11 - s10) if (s11 != s10) else 0.0
                 x = origin[0] + (col + 1) * spacing[0]
                 y = origin[1] + (row + t) * spacing[1]
                 intersections.append((x, y))
 
             # Edge 2: Top edge (right to left)
-            if (s11 <= isovalue) != (s01 <= isovalue):
+            if (s11 < isovalue) != (s01 < isovalue):
                 t = (isovalue - s11) / (s01 - s11) if (s01 != s11) else 0.0
                 x = origin[0] + (col + 1 - t) * spacing[0]
                 y = origin[1] + (row + 1) * spacing[1]
                 intersections.append((x, y))
 
             # Edge 3: Left edge (top to bottom)
-            if (s01 <= isovalue) != (s00 <= isovalue):
+            if (s01 < isovalue) != (s00 < isovalue):
                 t = (isovalue - s01) / (s00 - s01) if (s00 != s01) else 0.0
                 x = origin[0] + col * spacing[0]
                 y = origin[1] + (row + 1 - t) * spacing[1]
